@@ -1,4 +1,4 @@
-echo " HelloWorld.md "
+# HelloWorld.md 
 ## This is a markdown file
 git init
 git add HelloWorld.md
