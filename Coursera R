@@ -1,0 +1,715 @@
+#<- assignment
+x<-1
+#show on screen print or message
+print(x)
+msg<-"hello"
+#place ## after for comments to be ignored
+msg ##print the message on screen
+#or you can auto print the object 
+x
+#the number [1] 1 shown in the console is telling you 
+#it is the first element of the vector see console [1] 1
+# a colon creates a sequence
+x<- 1:20
+x
+#vectors have to be in the same class(character, numeric(real numbers), 
+# integer, complex, logical - true or false) except a list
+o<-1L ##creates 1 as a integer not just a numeric
+o
+#c is to conconate
+x<-c(0.5,0.6)
+x
+#if you if different classes in the vector it will create it as the
+#least common denominator (for True=1 and False =2)
+y<-c(1.7,"a")
+y ##this made  1.7 as  a character the least common denominator
+y<-c(TRUE, 2)
+y ##this made  1.7 as  a numeric the least common denominator
+#remember True = 1 and False = 2 in numeric
+y<-c(TRUE, "a")
+y ##this made  TRUE as  a chracter the least common denominator
+
+#class shows the class
+x<-0:6
+class(x)
+
+#when you want to convert something use the word 'as' 
+#example 
+as.numeric(x)
+as.logical(x)
+as.character(x)
+#if you can not convert you will get nas
+x<-c("a","b","c")
+as.logical(x)
+#list are like a vector and can have different classes
+x<-list(1,"a",TRUE,1+4i)
+x
+#prints out differently because vectors must be the same class
+#the double [] show it is a list not a vector []
+#[[4]] is a complex vector 1+4i
+
+#matrix are special type of vector with rows and columns
+m<-matrix(nrow=2,ncol=3)
+m
+#no values and that is why NA
+#creates the values in the matrix by the first column then the second ...
+m<-matrix(1:6,nrow=2,ncol=3)
+m
+
+#m add the dimension afterwards; start with the vector
+#with 2 rows and 5 columns
+m<-1:10
+m
+dim(m)<-c(2,5)
+m
+
+#or bidn columns or rows with cbin or rbin
+x<-1:3
+y<-10:12
+cbind(x,y) ## so put x in column 1 and y in column 2
+z<-100:102
+cbind(x,y,z) ## so put x in column 1 and y in column 2 and z in col 3
+
+#example for rows
+rbind(x,y) 
+
+#factors represetnt nrowegorical data
+#factors are self describing
+#the coding for the varibable is built in
+x<-factor(c("yes","yes","no","yes","no"))
+x
+#the levels of this factor are no yes
+table(x) ##this will give us a frequency of the vector
+#to unclass 
+unclass(x)
+#the baseline level is the first level that is encountered
+#so if we create a factor variable with the elements 'yes' and 'no'
+#the baseline level is the first level that is encountered
+#because no comes before yes in the alphabete then no is the baseline
+#level and yes is the second level
+#if you want yes to be the baseline level you have to tell it
+x
+x<-factor(c("yes","yes","no","yes","no"),levels=c("yes","no"))
+x
+#missing values are na or nan
+#use function to find these by using is.na or is.nan
+x<- c(1,2,NA,10,3)
+is.na(x) ## where true is where the missing value is
+is.nan(x) ## no nan values
+
+#data frames are a special type of lists
+#each column is an element of the list. each column has to 
+#have the same length but can have different classes
+
+x<-data.frame(foo=1:4,bar=c(T,T,F,F))
+x
+nrow(x)
+#call the names fundtion to see the names
+names(x)
+
+p<- 1:3
+names(p) ##there are no names for this vector
+names(p)<- c("foo","bar","narf")
+p
+
+#lists can also have names
+x<- list(a=1,b=2,c=3)
+x ##prints with names and values
+
+#dims can have names
+m<-matrix(1:4,nrow=2,ncol=2)
+dimnames(m)<- list(c("a","b"),c("c","d"))
+m
+
+#reading and writing data in R
+#the simplest is read.table
+data <- read.table('/Users/durrm/Desktop/R folder/data/worms.txt',head=T)
+data <- read.csv('/Users/durrm/Desktop/R folder/data/pga.csv')
+
+#to make R much faster you want to help it figure out the data set
+#instead of using the default
+#to use this you need to know the class of each column
+#to figure on the classes
+
+
+#calculating memory
+#look at the dataframe number of rows and columns
+#assume for now all numeric
+#say there are 1.5 millions rows and 120 columns assumimg 8 bytes per cell
+# 1500000000 X 120 X 8 = 1440000000000
+# there is 2^20 bytes per megabyte same as 1048576
+#which we then divided 1440000000000/1,048,576.00  = bytes/megabytes
+#equal to  mb divide 1373.291016 mb
+# for division by gigabytes  2^30 bytes
+# you need twice as much as needed here
+
+#dump or dput perserve the metadata
+y<-data.frame(a=1,b="a")
+dput(y)
+
+#best usefulness is to put this in a file
+dput(y,file="y.R")
+#you can get this object by
+new.y<-dget("y.R")
+new.y
+
+#the dumping function is similiar
+#dump can be used on multiple r objects
+
+x<-"foo"
+y<-data.frame(a=1,b="a")
+dump(c("x","y"),file="data.R")
+#remove the objects if you want to
+rm(x,y)
+source("data.R")
+y
+
+#file funtion opens to a standrd uncompressed file
+#gzfile for compressed files like gzip
+#bxfile other compressed files
+#url opens connections to the webpage
+
+#con to read parts of a file
+#readlines to read specific lines
+
+#example connect to website and read some lines
+con<-url("http://www.jhsph.edu","r")
+x<-readLines(con)
+head(x)
+
+#subset
+#[ ] gives the same class back
+#[[]] gives back the lists the object may be a different class
+#$ gives back 
+x<-c("a","b","c","c","d","a")
+x[1]
+x[2:4]
+x[x>"a"]
+#create a logical vector - shows where x>a is true or false
+u <- x>"a"
+u
+
+#this is a subsetting list
+x<-list(foo=1:4, bar=0.6)
+x[1]
+x[[1]]
+x$bar
+x$foo
+x["bar"]
+x[["bar"]]
+#dont need to remember where it is just the name
+
+#if you want to extract multiple elements of the list
+#use the single brackets see below
+x<-list(foo=1:4, bar=0.6, baz="hello")
+x[c(1,3)]
+
+#use the double bracket to index a list
+#especially if the name is the product of some computation
+x<-list(foo=1:4, bar=0.6, baz="hello")
+name<-"foo"
+
+x[[name]]
+#looking for name below
+x$name
+
+x<-list(a=list(10,12,14),b=c(3.14,2.81))
+x[[c(1,3)]]
+x[[c(2,1)]]
+
+#subsetting matrix by default drop = True and drops the dimension 
+
+x<-matrix(1:6,2,3)
+x[1,2]
+x
+
+# have drop = to false to GET THE 1 by 1 matrix
+x<-matrix(1:6,2,3)
+x[1,2,drop=FALSE]
+
+#
+x[1, ]
+#if you want the matrix add drop = F
+x[1,,drop=FALSE]
+
+
+#Partial matching
+#if only one elements matches it will return that element
+x<-list(arrdvark=1:5)
+x$a
+#this expects an exact match
+x[["a"]]
+#to not have an exact match use exact = FALSE
+x[["a",exact = FALSE]]
+
+#remove missing values or NA
+#create a logical vector to remove. bad is a new vector false 
+x<-c(1,2,NA,4,NA,5)
+bad<-is.na(x)
+x[!bad]
+y<-c("a","b",NA,"d",NA,"f")
+y
+good<-complete.cases(x,y)
+good
+x[good]
+y[good]
+
+#vectorized operations - look no loop needed
+x<-1:4; y<-6:9
+x+y
+x
+x>2
+x>=2
+x==2
+x*y
+x/y
+#true multipl in row ion
+x %*% y
+
+x<-list(2,"a","b",TRUE)
+x[[1]]
+
+x <- 1:4
+y <- 2
+x+y
+
+x <- c(3, 5, 1, 10, 12, 6)
+x[x > 0] <- 6
+x
+x[x == 0] < 6
+x
+x[x < 6] <- 0
+
+#from the quiz for R week 1
+# Use the Week 1 Quiz Data Set to answer questions 11-20.
+#In the dataset provided for 
+#this Quiz, what are the column names of the dataset?
+
+#1. R was developed by statisticians working at
+#The University of Auckland
+
+#2. The definition of free software consists of four freedoms (freedoms 0 through 3). Which of the following is NOT one of 
+#the freedoms that are part of the definition? Select all that apply.
+#A. The freedom to restrict access to the source code for the software.
+#B. The freedom to prevent users from using the software for undesirable purposes.
+#c. The freedom to sell the software for any price.
+
+#3. In R the following are 
+#all atomic data types EXCEPT: (Select all that apply)
+#A. matrix
+#B. table
+#C. list
+#D. array
+#E. data frame
+
+#4. If I execute the expression x <- 4L in R, what is the class
+#of the object `x' as determined by the `class()' function?
+#integer
+
+#5. What is the class of the 
+#object defined by the expression x <- c(4, "a", TRUE)?
+#character
+
+#6. If I have two vectors x <- c(1,3, 5) and y <- c(3, 2, 10),
+#what is produced by the expression cbind(x, y)?
+#? a matrix with 2 columns and 3 rows
+
+#7. A key property of vectors in R is that
+#elements of a vector all must be of the same class
+
+#8. Suppose I have a list defined as x <- list(2, "a", "b", TRUE).
+# What does x[[1]] give me? Select all that apply.
+#a numeric vector containing the element 2
+#a numeric vector of length 1.
+
+#9. Suppose I have a vector x <- 1:4 and a vector y <- 2. 
+#What is produced by the expression x + y?
+#a numeric vector with elements 3, 4, 5, 6.
+
+#10. Suppose I have a vector x <- c(3, 5, 1, 10, 12, 6) 
+#and I want to set all elements of this vector that are 
+#less than 6 to be equal to zero. 
+#What R code achieves this? Select all that apply.
+#x[x <= 5] <- 0
+#x[x < 6] <- 0
+#x[x %in% 1:5] <- 0
+
+#11. Use the Week 1 Quiz Data Set to 
+#answer questions 11-20.
+#In the dataset provided for this Quiz, 
+#what are the column names of the dataset?
+
+data <- read.csv('/Users/durrm/Desktop/R folder/data/hw1_data.csv')
+nrow(data)
+
+#12. Extract the first 2 rows of the data frame and print 
+#them to the console. 
+#What does the output look like?
+
+head(data,2)
+
+#13. How many observations (i.e. rows) are in this data frame?
+nrow(data)
+#14. Extract the last 2 rows of the data frame 
+#and print them to the console. What does the output look like?
+tail(data,2)
+
+#15. What is the value of Ozone in the 47th row?
+print(data[47, 1])
+
+#16. How many missing values are in the 
+#Ozone column of this data frame?
+sum(is.na(data[,1]))
+
+#17. What is the mean of the Ozone column in this dataset? 
+#Exclude missing values (coded as NA) from this calculation.
+
+x<-subset(df, !is.na(Ozone))
+x
+mean(x$Ozone)
+
+#18. Extract the subset of rows of the data frame where Ozone 
+#values are above 31 and Temp values are above 90. 
+#What is the mean of Solar.R in this subset?
+
+newdata <- x[which(x$Ozone > 31
+                         & x$Temp > 91), ]
+mean(newdata$Solar.R)
+
+#19. What is the mean of "Temp" when "Month" is equal to 6?
+
+x
+tempdata<-x[which(x$Month==6),]
+mean(tempdata$Temp)
+
+#20. What was the maximum ozone value in the month of May 
+#(i.e. Month is equal to 5)?
+
+tempmonth<-x[which(x$Month==5),]
+max(tempmonth$Ozone)
+
+#quiz for R week 2
+#Suppose I define the following function in R
+#cube <- function(x, n) {
+ # x^3
+#}
+#1. What is the result of running
+#cube(3)
+#in R after defining this function?
+cube <- function(x, n) {
+  x^3
+}
+cube(3)
+#27
+
+#2. The following code will produce a warning in R.
+
+x <- 1:10
+if(x > 5) {
+  x <- 0
+}
+
+# Why? 'x' is a vector 
+#of length 10 and 'if' can only test a single logical statement.
+
+#3. Consider the following function
+
+f <- function(x) {
+  g <- function(y) {
+    y + z
+  }
+  z <- 4
+  x + g(x)
+}
+#If I then run in R
+
+z <- 10
+f(3)
+#What value is returned? 10
+
+#4. Consider the following expression:
+
+x <- 5
+y <- if(x < 3) {
+  NA
+} else {
+  10
+}
+#What is the value of 'y' after evaluating this expression? 10
+
+#5. Consider the following R function
+
+h <- function(x, y = NULL, d = 3L) {
+  z <- cbind(x, d)
+  if(!is.null(y))
+    z <- z + y
+  else
+    z <- z + f
+  g <- x + y / z
+  if(d == 3L)
+    return(g)
+  g <- g + 10
+  g
+}
+#Which symbol in the above function is a free variable? ?L or g?
+
+#6. What is an environment in R? 
+#a collection of symbol/value pairs
+
+#7. The R language uses what type 
+#of scoping rule for resolving free variables?
+#lexical scope
+
+#8. How are free variables in R functions resolved?
+#The values of free variables are searched for in 
+#the environment in which the function was defined
+
+#9. What is one of the consequences of the scoping rules used in R?
+#All objects must be stored in memory
+
+#10. In R, what is the parent frame?
+#In R, what is the parent frame? 
+# It is the environment in which a function was called
+
+#week 3 LOOP Functions
+#Lapply
+#loop over a list and evaluate a function for each statement
+#lapply always returns a list regardless of the class of input
+x<-list(a=1:5,b=rnorm(10))
+lapply(x,mean)
+#shows the mean of the first element and the mean of the second
+#$a
+#[1]3
+#b
+#[1] 0.2091932
+
+# alittle more complicated
+x<-list(a=1:4,b=rnorm(10),c=rnorm(20,1),d=rnorm(100,5))
+lapply(x,mean)
+#$a
+#[1] 2.5
+#$b
+#[1] 0.04420729
+#$c
+#[1] 1.173324
+#$d
+#[1] 5.118132
+
+#another way to call lapply
+x<-1:4
+lapply(x,runif)
+#add min and max
+lapply(x,runif,min=0,max=10)
+
+#annomonyous functions
+x<-list(a=matrix(1:4,2,2),b=matrix(1:6,3,2))
+x
+#and to call the first element first function from a and b
+lapply(x, function(elt) elt[,1])
+
+#lapply always returns a list
+#if you do not want a list then use sapply to return a vector
+#sapply simplifies when it can
+
+x<-list(a=matrix(1:4),b=rnorm(10), c=rnorm(20,1), d=rnorm(100,5))
+x
+lapply(x,mean)
+sapply(x,mean)
+
+#apply evaluates a function
+#apply uses less typing
+#the first element is an array
+#an array is a vector that has demensions attached to it
+#a margin is an integer vector indicating which margin should be 'retained'
+#FUN is a function to be applied
+#... is for other arguments to be passed to FUN
+x<-matrix(rnorm(200),20,10)
+# the 2 means perserve all the columns
+apply(x,2,mean)
+# the 1 means perserve all the rows
+apply(x,1,sum)
+
+#special functions that are highly optimized to do this very quickly
+#equivalent to using the apply function but faster
+rowSums=apply(x,1,sum)
+rowMeans=apply(x,1,mean)
+colSums =apply(x,2,sum)
+colMeans =apply(x,2,mean)
+
+#here is an extended example
+apply(x,1,quantile, probs=c(0.25,0.75))
+#the perserves the rows
+#the argument for quantile is call probs
+#it calculates the quantile of .25 and .75 for each row
+#this shows all 20 rows with both valuses for 25% and 75%
+
+#now we create an array with normal random variables.
+#it has 2 rows
+
+a<-array(rnorm(2*2*10),c(2,2,10))
+apply(a,c(1,2),mean)
+
+#
+rowMeans(a,dims=2)
+
+#mapply
+#applies a function in parrell over a set of arguments
+str(mapply)
+
+#create a list and repeat 1 4 times
+list(rep(1,4), rep(2,3),rep(3,2),rep(4,1))
+#instead we can
+mapply(rep,1:4,4:1)
+
+#another function
+noise<-function(n,mean,sd){
+  rnorm(n,mean,sd)
+}
+noise(5,1,2)
+noise(1:5,1:5,2)
+mapply(noise,1:5,5:1,2)
+#sd=2
+
+#tapply used to apply a function over subsets of a vector 
+str(tapply)
+x<-c(rnorm(10),runif(10),rnorm(10,1))
+#notice is the gl function
+f<-gl(3,10)
+f
+#need to simplify 
+tapply(x,f,mean)
+tapply(x,f,range)
+#useful because is splits it up and then brings it back
+
+
+#split
+#takes a vector or other objects and splits it into groups 
+#detemined by a factor or list of factors
+str(split)
+x<-c(rnorm(10),runif(10),rnorm(10,1))
+f<-gl(3,10)
+f
+split(x,f)
+lapply(split(x,f),mean) #tapply would do the same things
+
+data <- read.csv('/Users/durrm/Desktop/R folder/data/hw1_data.csv')
+nrow(data)
+s<-split(data,data$Month)
+lapply(s, function(x) colMeans(x[,c("Ozone","Solar.R","Wind")]))
+#because there are missing values we get NA
+#before we fix that we can use sapply to simplify
+sapply(s, function(x) colMeans(x[,c("Ozone","Solar.R","Wind")]))
+sapply(s, function(x) colMeans(x[,c("Ozone","Solar.R","Wind")],
+                               na.rm=TRUE))
+#split is handy 
+
+
+x<-rnorm(10)
+f1<-gl(2,5)
+f2<-gl(5,2)
+f1
+f2
+interaction(f1,f2)
+
+str(split(x,list(f1,f2)))
+#get rid of empty elements
+str(split(x,list(f1,f2),drop=TRUE))
+
+#Debugging tools built into R
+#3 main indications: 
+# often ok - will execute message, 
+#something unexpected happened-warning, 
+#fatal will stop - error, 
+#all three of these are a condition
+
+#basic warning
+log(-1)   # you can't take the log of a negative number!
+#this message shows nan s are produced - that may be ok
+
+# a warning message because 
+# invisible(x) = does not print to the console
+printmessage<- function(x) {
+  if(x>0)
+    print("x is greater than 0")
+  else
+    print("x is less than or equal to 0")
+  invisible(x)
+}
+# returns the 1
+printmessage(1)
+#returns a error because NA is a missing value. 
+#it does not know what to do
+printmessage(NA)
+
+#to fix the problem (the invisible is not neccessary)
+printmessage2<- function(x) {
+  if(is.na(x))
+    print("missing value!")
+  else if(x>0)
+    print("x is greater than 0")
+  else
+    print("x is less than or equal to 0")
+  invisible(x)
+}
+printmessage2(NA)
+x<-log(-1)   # here it is not what we are expecting
+x<-log(1)
+printmessage2(x)
+#is something wrong or user error
+#what were you expecting
+#what did you actually get
+#reproduce the problem
+
+
+#tools 5 basic functions
+#traceback - prints out the fucntion call back to help you see
+#where the error occurred
+#debug - flags that function for debug mode - suspends
+#browser - suspends the execution then go line by line
+#trace - allows you to insert debugging code in the function
+# usually just a call to the browser function
+#recover - allows you to modify the error (change the error handle)
+#so that you can browse the function call stack
+#also put print in to see hwat is going on - take them out before usingaa=="NA"
+
+#xa does not exist so you get an error
+mean(xa)
+#must call traceback right after the code because it looks at the last erro
+traceback()
+
+#lm is the linear modeling function
+lm(y-xa)
+traceback()
+# could not find the value 
+
+#debug
+#while in debug slect 'next' to see where the error occurred
+debug(lm)
+lm(y-xa)
+#when it hits the error you get bounced
+
+
+#recover 
+options(error=recover)
+read.csv("nosuchfile")
+#read csv is just a wrapper for read.table
+#so it calls the table
+#not sure how this works??????
+
+#Quiz 3
+#Take a look at the 'iris' dataset that comes with R. 
+#The data can be loaded with the code:
+library(datasets)
+data(iris)
+#A description of the dataset can be found by running
+?iris
+#There will be an object called 'iris' in your workspace. 
+#In this dataset, what is the mean of 'Sepal.Length' for the species virginica? 
+#Please round your answer to the nearest whole number.
+#(Only enter the numeric result and nothing else.) 5.843333
+mean(iris$Sepal.Length)
+
+#Continuing with the 'iris' dataset from the previous Question, 
+#what R code returns a vector of the means of 
+#the variables 'Sepal.Length', 'Sepal.Width', 
+#'Petal.Length', and 'Petal.Width'?
