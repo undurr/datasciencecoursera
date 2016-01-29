@@ -1,0 +1,140 @@
+
+#need packages (tidyr)
+###pollutantmean <- function('/Users/durrm/Desktop/R folder/data/specdata/', pollutant='sulfate', id = 1:332) {
+  ## 'directory' is a character vector of length 1 indicating
+  ## the location of the CSV files
+  
+  ## 'pollutant' is a character vector of length 1 indicating
+  ## the name of the pollutant for which we will calculate the
+  ## mean; either "sulfate" or "nitrate".
+  
+  ## 'id' is an integer vector indicating the monitor ID numbers
+  ## to be used
+  
+  ## Return the mean of the pollutant across all monitors list
+  ## in the 'id' vector (ignoring NA values)
+setwd("/Users/durrm/Desktop/R folder/data/specdata/")
+#or
+setwd("~/Desktop/R folder/data/")
+getwd()
+#show the whole directory
+dir()
+directory<-"specdata"
+
+pollutantmean <- function(directory, pollutant, id = 1:332) {
+  files_full <- list.files(directory, full.names = TRUE) 
+  
+  dat <- data.frame()
+  
+  for (i in id) {
+    dat <- rbind(dat, read.csv(files_full[i]))
+  }
+  
+  mean(dat[, pollutant], na.rm = TRUE)
+  
+}
+
+#1. What value is returned by the following call to pollutantmean()? 
+#You should round your output to 3 digits.
+pollutantmean("specdata", "sulfate", 1:10)
+
+#2. What value is returned by the following call to pollutantmean()? 
+#You should round your output to 3 digits.
+pollutantmean("specdata", "nitrate", 70:72)
+
+#3. What value is returned by the following call to pollutantmean()? 
+#You should round your output to 3 digits.
+pollutantmean("specdata", "sulfate", 34)
+
+
+#4. What value is returned by the following call to pollutantmean()?
+# You should round your output to 3 digits. ?seems to hang?
+#takes forever
+pollutantmean("specdata", "nitrate")
+
+#Write a function that reads a directory full of files and reports 
+#the number of completely observed cases in each data file. 
+#The function should return a data frame where the first column is 
+#the name of the file and the second column is the number of 
+#complete cases. A prototype of this function follows
+
+complete <- function(directory, id = 1:332) {
+  files_full <- list.files(directory, full.names = TRUE)
+  dat <- data.frame()
+  
+  for (i in id) {
+    moni_i <- read.csv(files_full[i])
+    nobs <- sum(complete.cases(moni_i))
+    tmp <- data.frame(i, nobs)
+    dat <- rbind(dat, tmp)
+  }
+  
+  colnames(dat) <- c("id", "nobs")
+  dat
+}
+
+#5. What value is printed at end of the following code?
+cc <- complete("specdata", c(6, 10, 20, 34, 100, 200, 310))
+cc
+print(cc$nobs)
+
+#6 What value is printed at end of the following code?
+cc <- complete("specdata", 54)
+print(cc$nobs)
+
+#7 What value is printed at end of the following code?
+set.seed(42)
+cc <- complete("specdata", 332:1)
+use <- sample(332, 10)
+print(cc[use, "nobs"])
+
+
+#Write a function that takes a directory of data files and a 
+#threshold for complete cases and calculates the correlation 
+#between sulfate and nitrate for monitor locations where the 
+#number of completely observed cases (on all variables) is 
+#greater than the threshold. The function should return a vector 
+#of correlations for the monitors that meet the threshold 
+#requirement. If no monitors meet the threshold requirement, 
+#then the function should return a numeric vector of length 0. 
+#A prototype of this function follows
+corr <- function(directory, threshold = 0) {
+  files_full <- list.files(directory, full.names = TRUE)
+  dat <- vector(mode = "numeric", length = 0)
+  
+  for (i in 1:length(files_full)) {
+    moni_i <- read.csv(files_full[i])
+    csum <- sum((!is.na(moni_i$sulfate)) & (!is.na(moni_i$nitrate)))
+    if (csum > threshold) {
+      tmp <- moni_i[which(!is.na(moni_i$sulfate)), ]
+      submoni_i <- tmp[which(!is.na(tmp$nitrate)), ]
+      dat <- c(dat, cor(submoni_i$sulfate, submoni_i$nitrate))
+    }
+  }
+  
+  dat
+}
+
+
+#8. What value is printed at end of the following code?
+
+cr <- corr("specdata")                
+cr <- sort(cr)                
+set.seed(868)                
+out <- round(cr[sample(length(cr), 5)], 4)
+print(out)
+
+#9. What value is printed at end of the following code?
+cr <- corr("specdata", 129)                
+cr <- sort(cr)                
+n <- length(cr)                
+set.seed(197)                
+out <- c(n, round(cr[sample(n, 5)], 4))
+print(out)
+
+#10. hat value is printed at end of the following code?
+cr <- corr("specdata", 2000)                
+n <- length(cr)                
+cr <- corr("specdata", 1000)                
+cr <- sort(cr)
+print(c(n, round(cr, 4)))
