@@ -1,0 +1,214 @@
+#what is the directory
+getwd()
+
+#for read csv it assumes the header.
+get.data <- read.csv('/Users/durrm/Desktop/R folder/data/getdata-data-ss06hid.csv')
+# 1 get the number of "VAL -Values" that are 1 Mill or more - code =24
+sum(get.data$VAL==24,na.rm=T)
+head(get.data)
+
+#for read csv it assumes the header.
+get.data2 <- read.csv('/Users/durrm/Desktop/R folder/data/getdata-data-DATA.gov_NGAP.csv')
+
+head(get.data2)
+
+dat.zip <- get.data2[17:22,7:15]
+
+#read first 6 rows
+head(dat.zip)
+#only 3 rows
+head(dat.zip,n=3)
+
+#read last 6 rows
+tail(dat.zip)
+
+
+#summarize the data
+summary(dat.zip)
+
+# information about data frame - the classes etc
+str(dat.zip)
+
+
+#quantile of the data looking at Zip 
+quantile(dat.zip$Zip,na.rm=FALSE)
+#add in probabilty
+quantile(dat.zip$Zip,probs=c(0.5,0.75,0.90),na.rm=FALSE)
+
+#make a table as well as add NA if there are any
+table(dat.zip$Zip,useNA="ifany")
+
+#@ dimensional table using zipcode and something else 
+#example would be counsil and zip code
+table(get.data$VAL,get.data$FINCP,useNA="ifany")
+table(dat.zip$Zip)
+
+#looking for missing values
+#if yes or no (0)
+sum(is.na(get.data$ELEP))
+
+
+#true false on NA
+any(is.na(get.data$ELEP))
+
+#are all ELEP data > 100 False or na
+all(get.data$ELEP>100)
+
+#take sums across columns or rows
+colSums(is.na(get.data))
+
+# create variables that are samples true or false. IF TRUE there 
+#no missing data in this data set. If False there are missing data
+all(colSums(is.na(get.data))==0)
+
+#find how many in VAL have a value of 24
+table(get.data$VAL==24)
+table(get.data$VAL %in% c("24"))
+
+#find how many in VAL have a value of 24 or value of 23
+table(get.data$VAL %in% c("24","23"))
+
+#create a data set with only the values you found above
+get.data[get.data$VAL %in% c("24","23"),]
+    
+
+get.data <- read.csv('/Users/durrm/Desktop/R folder/data/getdata-data-ss06hid.csv')    
+#get the object size of the data
+object.size(get.data)
+object.size(get.data)
+print(object.size(get.data),units="Mb")
+
+#load a data set
+#UCBAdmissions is a built in data set for R
+data(UCBAdmissions)
+DF=as.data.frame(UCBAdmissions)
+summary(DF)
+
+#make crosstabs to see where the relationships exist in the data set. 
+# This is from data frame (named DF) see above
+xt<-xtabs(Freq~Gender+Admit, data=DF)
+xt
+
+#Flat tables
+#Warpbreaks is a built in data set for R
+warpbreaks$replicate <- rep(1:9,len=54)
+#~. means all the other variables in the dataset
+xt<-xtabs(breaks~.,data=warpbreaks)
+xt
+#now make a flat table - whihc uses the 3 varialbes: replicate, wool, tension
+ftable(xt)
+
+#make sure reshape2 is on to use the following
+library(reshape2)
+head(mtcars)
+mtcars$carname<-rownames(mtcars)
+carMelt<-melt(mtcars,id=c("carname","gear", "cyl"),measure.vars = c("mpg", "hp"))
+head(carMelt,n=3)
+tail(carMelt,n=3)
+
+#create data frames and show dat in different ways
+cylData <- dcast(carMelt, cyl~variable)
+cylData
+#add the mean
+cylData <- dcast(carMelt, cyl~variable,mean)
+cylData
+
+#read in the data for insectsprays
+data(InsectSprays)
+#see the first 6 lines
+head(InsectSprays)
+#take the sum of the count of insects that you see for each of the different sprays
+tapply(InsectSprays$count,InsectSprays$spray,sum)
+#another way to do this is split apply combine
+spIns=split(InsectSprays$count,InsectSprays$spray)
+spIns
+#now apply a function to that list
+sprCount=lapply(spIns,sum)
+sprCount
+#this will make it go back to a vector
+unlist(sprCount)
+sapply(spIns,sum)
+
+
+#deployer package use .() so do not need quatation marks
+#use this to summarize spray and sum
+ddply(InsectSprays,.(spray),summarize,sum=sum(count))
+#can use this to calculate the variables and apply to each
+spraySums<-ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))
+dim(spraySums)
+
+
+# the dplyr package
+#first load it
+library(dplyr)
+#load the chicago database
+chicago<-readRDS('/Users/durrm/Desktop/R folder/data/chicago.rds')
+#what are the dimensions over 6000 rows and 8 columns
+dim(chicago)
+#show the 
+str(chicago)
+#show the names of the colums
+names(chicago)
+#with the select you can look at the names rather than the columns. even for a range
+head(select(chicago,city:dptp))
+#with the select you can tell what not to look at
+head(select(chicago,-(city:dptp)))
+
+#filter the rows
+chic.f<-filter(chicago,pm25tmean2>30)
+head(chic.f)
+chic.f<-filter(chicago,pm25tmean2>30 &tmpd>80)
+head(chic.f)
+#arrange or order according to the date
+chicago<-arrange(chicago,date)
+head(chicago)
+tail(chicago)
+#descending order
+chicago<-arrange(chicago,desc(date))
+head(chicago)
+tail(chicago)
+
+#rename a variable
+chicago<-rename(chicago,pm25=pm25tmean2,dewpoint=dptp)
+
+#mutate to a new variable
+#this example shows deviation from the mean
+chicago <- mutate(chicago, pm25detrend=pm25-mean(pm25,na.rm=TRUE))
+head(select(chicago,pm25,pm25detrend))
+head (chicago)
+
+chicago <- mutate(chicago, tempis=factor(1*(tmpd>80), labels=c("cold","hot")))
+hotcold<-group_by(chicago,tempis)
+hotcold
+
+summarize(hotcold,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))
+chicago <- mutate(chicago, year=as.POSIXlt(date)$year+1900)
+years<-group_by(chicago, year)
+summarize(years,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))
+
+#pipleline to create a new data set pipeline operator chaning a bunch of observations
+chicago %>% mutate(month=as.POSIXlt(date)$mon+1) %>% group_by(month) %>% summarize(pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))
+
+#data.table is designed for very large and fast databases
+
+#merging data  for example mergedata2=merge(reviews,solutions,all=TRUE) 
+#see it with head
+
+#join - can only merge on common names
+df1=data.frame(id=sample(1:10),x=rnorm(10))
+df2=data.frame(id=sample(1:10),y=rnorm(10))
+arrange(join(df1,df2),id)
+               
+#to see what directory you are in and to see what is in it
+getwd()
+dir()
+
+
+
+x<-data.frame("zip"=sample(1:5))
+
+#REad from the internet
+con = url("https://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en")
+htmlCode=readLines(con)
+close(con)
+htmlCode
